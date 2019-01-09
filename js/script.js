@@ -113,7 +113,7 @@ window.onload = function(){
 console.log(Math.random() < 1 - Math.pow(.993, 20))
 function update(dt) {
     gameTime += dt;
-    player.sprite.update(dt);
+    //player.sprite.update(dt);
 
     handleInput(dt);
    
@@ -160,18 +160,22 @@ function handleInput(dt) {
     
     if(input.isDown('DOWN') || input.isDown('s')) {
         player.pos[1] += playerSpeed * dt;
+        player.sprite.update(dt);
     }
 
     if(input.isDown('UP') || input.isDown('w')) {
         player.pos[1] -= playerSpeed * dt;
+        player.sprite.update(dt);
     }
 
     if(input.isDown('LEFT') || input.isDown('a')) {
         player.pos[0] -= playerSpeed * dt;
+        player.sprite.update(dt);
     }
 
     if(input.isDown('RIGHT') || input.isDown('d')) {
         player.pos[0] += playerSpeed * dt;
+        player.sprite.update(dt);
     }
 
     // if(input.isDown('SPACE') &&
