@@ -4,36 +4,44 @@ window.requestAnimationFrame = window.requestAnimationFrame
 || function(callback) { window.setTimeout(callback, 1000 / 60)};
 
 
-
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var looping = false;
 var totalSeconds = 0;
 var enemySpeed = 100;
 var playerSpeed = 200;
+var lastStrike = Date.now();
 var lastTime;
 var img = new Image();
 img.src = 'img/my_background_2.png';
 var hero = new Image();
-hero.src = 'img/hero.png';
+//hero.src = 'img/silver.png';
+hero.src ="img/hero_run_jump_atk1.png";
 var enemy = new Image();
-enemy.src = 'img/enemy.png'
+enemy.src = 'img/enemy_walk.png'
 var lastFrameTime = 0;
 resources = {
     images:{
-        "img/hero.png": hero,
-        'img/enemy.png': enemy
+       // "img/silver.png": hero,
+        "img/hero_run_jump_atk1.png": hero,
+        'img/enemy_walk.png': enemy
     },
     get(url){
         return this.images[url];
     }
 }
+ var moves ={
+     run: new Sprite('img/hero_run_jump_atk1.png', [10, 0], [127, 180], 17, [0, 1, 2, 3 ,4 ,5, 6, 7,8,9,10,11,12,13,14 ,15,16]),
+     jump: new Sprite('img/hero_run_jump_atk1.png', [5, 195], [93, 150], 27, [0, 1, 2, 3 ,4 ,5, 6, 7,8,9,10,11,12,13,14 ,15,16,17,18,19,20,21,22,23,24,25,26,27]),
+     hit: new Sprite('img/hero_run_jump_atk1.png', [0, 350], [164.5, 165], 17, [0, 1, 2, 3 ,4 ,5, 6, 7,8,9,10,11,12,13,14 ,15,16])
+ } 
 
 
 // Game state
 var player = {
-    pos: [100, 900],
-    sprite: new Sprite('img/hero.png', [8, 717], [64, 55], 3, [0, 1, 2, 3 ,4 ,5, 6, 7])
+    pos: [100, 800],
+    sprite: new Sprite('img/hero_run_jump_atk1.png', [10, 0], [127, 180], 17, [0, 1, 2, 3 ,4 ,5, 6, 7,8,9,10,11,12,13,14 ,15,16])
+    //sprite: new Sprite('img/silver.png', [299, 393], [47.5, 50], 12, [0, 1, 2, 3 ,4 ,5, 6, 7, 8, 9].reverse())
 };
 var enemies = [];
 var timerNow = null;
@@ -48,12 +56,13 @@ var scoreEl = document.getElementById('score');
 function main() {
     var now = Date.now();
     var dt = (now - lastTime) / 1000.0;
-
     update(dt);
     render();
 
     lastTime = now;
     requestAnimationFrame(main);
+
+    
 };
 
 
@@ -110,10 +119,10 @@ window.onload = function(){
    init();
    canvas.width = window.innerWidth;
 }
-console.log(Math.random() < 1 - Math.pow(.993, 20))
+
 function update(dt) {
     gameTime += dt;
-    //player.sprite.update(dt);
+    player.sprite.update(dt);
 
     handleInput(dt);
    
@@ -136,11 +145,11 @@ function update(dt) {
         var random = randomInteger(400, 700) * 10;
         
         timerNow = setTimeout(()=>{
-            console.log(random);
+            
             enemies.push({
-                pos: [canvas.width-20, 900],
-                sprite: new Sprite('img/enemy.png', [8, 588], [64, 55], 5, 
-                                    [0, 1, 2, 3 ,4 ,5, 6, 7, 8])
+                pos: [canvas.width-20, 800],
+                sprite: new Sprite('img/enemy_walk.png', [0, 0], [153, 156], 25, 
+                                    [0, 1, 2, 3 ,4 ,5, 6, 7, 8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24].reverse())
             });
         
             clearTimeout(timerNow);
@@ -157,45 +166,60 @@ function update(dt) {
 };
 
 function handleInput(dt) {
-    
-    if(input.isDown('DOWN') || input.isDown('s')) {
-        player.pos[1] += playerSpeed * dt;
-        player.sprite.update(dt);
+    var heigth = 100;
+    function animationDown(){
+        timer = setInterval(function(){
+            player.pos[1] +=2;
+            if(player.pos[1] == 800){
+                clearInterval(timer);
+                player.sprite = moves.run
+            }
+        }, 2)
     }
 
+    if(input.isDown('DOWN') || input.isDown('s')) {
+       // player.pos[1] += playerSpeed * dt;
+       
+    }
+
+    //-jump
+    
     if(input.isDown('UP') || input.isDown('w')) {
-        player.pos[1] -= playerSpeed * dt;
-        player.sprite.update(dt);
+        console.log(player.pos[1]);
+        if(player.pos[1] == 800) {
+            player.sprite = moves.jump;
+            console.log(player.pos[1]);
+            timer = setInterval(function(){
+                player.pos[1] -=2;
+                if(player.pos[1] == 570){
+                    clearInterval(timer);
+                    animationDown();
+                }
+            }, 2)
+        }
     }
 
     if(input.isDown('LEFT') || input.isDown('a')) {
         player.pos[0] -= playerSpeed * dt;
-        player.sprite.update(dt);
+      
     }
 
     if(input.isDown('RIGHT') || input.isDown('d')) {
         player.pos[0] += playerSpeed * dt;
-        player.sprite.update(dt);
+       
     }
-
-    // if(input.isDown('SPACE') &&
-    //    !isGameOver &&
-    //    Date.now() - lastFire > 100) {
-    //     var x = player.pos[0] + player.sprite.size[0] / 2;
-    //     var y = player.pos[1] + player.sprite.size[1] / 2;
-
-    //     bullets.push({ pos: [x, y],
-    //                    dir: 'forward',
-    //                    sprite: new Sprite('img/sprites.png', [0, 39], [18, 8]) });
-    //     bullets.push({ pos: [x, y],
-    //                    dir: 'up',
-    //                    sprite: new Sprite('img/sprites.png', [0, 50], [9, 5]) });
-    //     bullets.push({ pos: [x, y],
-    //                    dir: 'down',
-    //                    sprite: new Sprite('img/sprites.png', [0, 60], [9, 5]) });
-
-    //     lastFire = Date.now();
-    // }
+    //-hit
+    if(input.isDown('SPACE') &&
+       !isGameOver &&
+       Date.now() - lastStrike> 1000) {
+        player.sprite = moves.hit;
+        setTimeout(function(){
+            player.sprite = moves.run;
+        },1000)
+        lastStrike = Date.now();
+    }
+       
+    
 }
 
 function render() {
@@ -231,6 +255,5 @@ function randomInteger(min, max) {
   }
 
 document.body.onresize = function(e){
-    console.log(window.innerWidth);
     canvas.width = window.innerWidth;
 }

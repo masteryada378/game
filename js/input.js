@@ -1,7 +1,7 @@
 (function() {
     var pressedKeys = {};
 
-    function setKey(event, status) {
+    function setKey(event, status,eventName) {
         var code = event.keyCode;
         var key;
 
@@ -11,7 +11,18 @@
         case 37:
             key = 'LEFT'; break;
         case 38:
-            key = 'UP'; break;
+            {
+                console.log(player.pos[1])
+                key = 'UP';
+                 if(player.pos[1] < 800){
+                    status = false;
+                    event.preventDefault();
+                    event.stopPropagation();
+                // }else{
+                //     status = true;
+                 }
+            }
+             break;
         case 39:
             key = 'RIGHT'; break;
         case 40:
@@ -25,11 +36,11 @@
     }
 
     document.addEventListener('keydown', function(e) {
-        setKey(e, true);
+            setKey(e, true, 'keydown');
     });
 
     document.addEventListener('keyup', function(e) {
-        setKey(e, false);
+        setKey(e, false, 'keyup');
     });
 
     window.addEventListener('blur', function() {
