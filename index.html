@@ -7,21 +7,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>miniDarkSouls</title>
-    <style>
-        html, body{
-            height: 100vh;
-            width: 100vw;
-        }
-        body{
-            margin: 0;
-        }
-        canvas{
-            width: 100vw; 
-            height: 100vh;   
-        } 
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+        <div id="game-over-overlay">
+            </div>
+        
+            <div id="game-over">
+              <h1>GAME OVER</h1>
+              <button id="play-again">Play Again</button>
+            </div>
+        
+            <div class="wrapper">
+              <div id="instructions">
+                <div>
+                  move with <span class="key">arrows</span> or <span class="key">wasd</span>
+                </div>
+                <div>
+                  shoot with <span class="key">space</span>
+                </div>
+              </div>
+        
+              <div id="score"></div>
+            </div>
     <canvas id="canvas" height="1000"></canvas>
     <script src="js/sprite.js"></script>
     <script src="js/input.js"></script>
