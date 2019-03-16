@@ -28,21 +28,22 @@ canvas {
 #instructions {
     float: left;
     font-family: sans-serif;
-    color: #757575;
+    color: #180d0d;
     position: relative;
     z-index: 100;
+    right: 70%;
 }
 
 #score {
     float: right;
-    color: white;
+    color: rgb(121, 3, 3);
     font-size: 2em;
     position: relative;
     z-index: 100;
 }
 
 .key {
-    color: #aaffdd;
+    color: #a300ff;
 }
 
 #game-over, #game-over-overlay {
